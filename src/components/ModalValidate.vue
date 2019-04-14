@@ -1,30 +1,53 @@
 <template>
     <modal
         title="Second modal width form"
-        @close="$emit('close')"
+        @close="onClose"
         >
         <div slot="body">
             <form @submit.prevent="onSubmit">
-                <div class="form-item" :class="{ errorInput: $v.name.$error }">
+                <div class="form-item" :class="{ errorInput: $v.form.name.$error }">
                     <label>Name:</label>
-                    <p class="errorText" v-if="!$v.name.required">Filed is required!</p>
-                    <p class="errorText" v-if="!$v.name.minLength">Name must have at least {{ $v.name.$params.minLength.min }} !</p>
+                    <p class="errorText" v-if="!$v.form.name.required">Filed is required!</p>
+                    <p class="errorText" v-if="!$v.form.name.minLength">Name must have at least {{ $v.form.name.$params.minLength.min }} !</p>
                     <input
-                        :class="{ error: $v.name.$error }"
+                        name="name"
+                        :class="{ error: $v.form.name.$error }"
                         type="text"
-                        v-model="name"
-                        @change="$v.name.$touch()"
+                        v-model="form.name"
+                        @change="$v.form.name.$touch()"
                     >
                 </div>
-                <div class="form-item" :class="{ errorInput: $v.email.$error }">
+                <div class="form-item" :class="{ errorInput: $v.form.email.$error }">
                     <label>Email:</label>
-                    <p class="errorText" v-if="!$v.email.required">Filed is required!</p>
-                    <p class="errorText" v-if="!$v.email.email">Email is not correct!</p>
+                    <p class="errorText" v-if="!$v.form.email.required">Filed is required!</p>
+                    <p class="errorText" v-if="!$v.form.email.email">Email is not correct!</p>
                     <input
-                        :class="{ error: $v.email.$error }"
+                        name="email"
+                        :class="{ error: $v.form.email.$error }"
                         type="text"
-                        v-model="email"
-                        @change="$v.email.$touch()"
+                        v-model="form.email"
+                        @change="$v.form.email.$touch()"
+                    >
+                </div>
+                <div class="form-item" :class="{ errorInput: $v.form.password.$error }">
+                    <label>Password:</label>
+                    <p class="errorText" v-if="!$v.form.password.required">Filed is required!</p>
+                    <p class="errorText" v-if="!$v.form.password.minLength">Password must have at least {{ $v.form.password.$params.minLength.min }} !</p>
+                    <input
+                        :class="{ error: $v.form.password.$error }"
+                        type="password"
+                        v-model.trim="form.password"
+                        @change="$v.form.password.$touch()"
+                    >
+                </div>
+                <div class="form-item" :class="{ errorInput: $v.form.repeatPassword.$error }">
+                    <label>Password confirm:</label>
+                    <p class="errorText" v-if="!$v.form.repeatPassword.sameAsPassword">Passwords must be identical.</p>
+                    <input
+                        :class="{ error: $v.form.repeatPassword.$error }"
+                        type="password"
+                        v-model.trim="form.repeatPassword"
+                        @change="$v.form.repeatPassword.$touch()"
                     >
                 </div>
                 <!-- button -->
@@ -37,7 +60,7 @@
 <script>
 import Modal from '@/components/UI/Modal.vue'
 
-import { required, minLength, email } from 'vuelidate/lib/validators'
+import { required, minLength, email, sameAs } from 'vuelidate/lib/validators'
 
 export default {
     name: 'modal-validate',
@@ -46,35 +69,58 @@ export default {
     },
     data () {
         return {
-            name: '',
-            email: '',
-
+            form: {
+                name: '',
+                email: '',
+                password: '',
+                repeatPassword: ''
+            }
         }
     },
     validations: {
-        name: {
-            required,
-            minLength: minLength(4)
-        },
-        email: {
-            required,
-            email
+        form: {
+            name: {
+                required,
+                minLength: minLength(4)
+            },
+            email: {
+                required,
+                email
+            },
+            password: {
+                required,
+                minLength: minLength(6)
+            },
+            repeatPassword: {
+                sameAsPassword: sameAs('password')
+            }
         }
     },
     methods: {
         onSubmit () {
             this.$v.$touch();
-            if (!this.$v.invalid) {
+            if (!this.$v.$invalid) {
                 const user = {
-                    name: this.name,
-                    email: this.email
+                    name: this.form.name,
+                    email: this.form.email,
+                    password: this.form.password
                 }
+
+                // Done
                 console.log(user);
-                this.name = '';
-                this.email = '';
+                for (let field in this.form) {
+                    this.form[field] = ''
+                }
                 this.$v.$reset();
                 this.$emit('close');
             }
+        },
+        onClose () {
+            for (let field in this.form) {
+                this.form[field] = ''
+            }
+            this.$v.$reset();
+            return this.$emit('close');
         }
     }
 }
