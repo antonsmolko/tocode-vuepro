@@ -1,5 +1,5 @@
 {
-  "name": "modals",
+  "name": "hw-2-plus",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,7 +8,8 @@
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "vue": "^2.6.6"
+    "vue": "^2.6.6",
+    "vue-router": "^3.0.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.5.0",

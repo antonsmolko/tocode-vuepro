@@ -4,7 +4,7 @@
             <div class="modal-content" @click.stop>
                 <!-- header -->
                 <div class="modal-header">
-                    <span class="modal-title">{{ title }}</span>
+                    <h3 class="modal-title">{{ title }}</h3>
                     <span class="button-close" @click="$emit('close')">×</span>
                 </div>
 
@@ -67,7 +67,8 @@ export default {
 
     .modal-content {
         position: relative;
-        max-width: 600px;
+        width: 400px;
+        max-width: 100%;
         padding: 20px 18px;
         background-color: #fff;
         border: 1px solid #dcdfe6;
@@ -85,6 +86,7 @@ export default {
             font-size: 24px;
         }
         .button-close {
+            line-height: 1;
             cursor: pointer;
         }
         .modal-body {

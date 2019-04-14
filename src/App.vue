@@ -1,90 +1,89 @@
 <template>
-  <div class="wrapper">
-    <div class="wrapper-content">
+    <div class="wrapper">
+        <!-- header -->
+        <header>
+            <div class="navbar">
+                <div class="container">
+                    <div class="navbar-content">
+                        <div class="logo">VUE-CLI</div>
+                        <ul class="navbar-list">
+                            <li class="navbar-item" v-for="link in links" :key="link.title">
+                                <router-link class="navbar-link" :title="link.title" :to="link.url">{{ link.title }}</router-link>
+                            </li>
 
-      <section>
-        <div class="container">
-          <!-- first modal -->
-          <button class="btn btnPrimary" @click="modalFirst = true">Show first modal</button>
-          <modal
-            v-show="modalFirst"
-            title="First modal"
-            @close="modalFirst = false"
-          >
-            <div slot="body">
-              <p>Text Text Text text text</p>
-              <button class="btn btnPrimary" @click="modalFirst = false">Well Done!</button>
+                            <!-- home-work-2+ -->
+                            <li class="navbar-item">
+                                <span class="navbar-link" @click="modalAuthorisation = true">Авторизация</span>
+                            </li>
+                            <li class="navbar-item">
+                                <span class="navbar-link" @click="modalRegistration = true">Регистрация</span>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
             </div>
-          </modal>
+        </header>
+        <!-- end-header -->
 
-          <!-- second modal -->
-          <button class="btn btnPrimary" @click="modalSecond.show = true">Show Second modal</button>
-          <modal
-            v-show="modalSecond.show"
-            title="Second modal width form"
-            @close="modalSecond.show = false"
-          >
-            <div slot="body">
-              <form @submit.prevent="submitSecondForm">
-                <label>Name:</label>
-                <input type="text" v-model="modalSecond.name" required>
-                <label>Email:</label>
-                <input type="email" v-model="modalSecond.email" required>
-                <button class="btn btnPrimary">Submit!</button>
-              </form>
-            </div>
-          </modal>
+        <router-view></router-view>
 
-          <!-- modal validate -->
-          <button class="btn btnPrimary" @click="modalValidate = true">Show Modal Validate</button>
-          <modal-validate
-            v-show="modalValidate"
-            @close="modalValidate = false"
-          />
-        </div>
-      </section>
-
+        <!-- modals -->
+        <modal-authorisation
+            v-show="modalAuthorisation"
+            @close="modalAuthorisation = false"
+            @toReg="toReg"
+        />
+        
+        <modal-registration
+            v-show="modalRegistration"
+            @close="modalRegistration = false"
+            @toAuth="toAuth"
+        />
+        <!-- end-modals -->
     </div>
-  </div>
 </template>
 
 <script>
-import Modal from '@/components/UI/Modal.vue'
-import ModalValidate from '@/components/ModalValidate.vue'
+
+import ModalAuthorisation from '@/components/ModalAuthorisation.vue'
+import ModalRegistration from '@/components/ModalRegistration.vue'
 
 export default {
-  name: 'app',
-  components: {
-    Modal,
-    ModalValidate
-  },
-  data() {
-    return {
-      modalFirst: false,
-      modalSecond: {
-        show: false,
-        name: '',
-        email: ''
-      },
-      modalValidate: false
+    name: 'App',
+    components: {
+        ModalAuthorisation,
+        ModalRegistration
+    },
+    data () {
+        return {
+            links: [
+                { title: 'Home', url: '/' },
+                { title: 'HW-2', url: '/home-work-2' },
+            ],
+            modalAuthorisation: false,
+            modalRegistration: false,
+        }
+    },
+    methods: {
+        toAuth () {
+            this.modalRegistration = false;
+            this.modalAuthorisation = true;
+        },
+        toReg () {
+            this.modalRegistration = true;
+            this.modalAuthorisation = false;
+        }
     }
-  },
-  computed: {
-  },
-  methods: {
-    submitSecondForm () {
-      console.log({
-        name: this.modalSecond.name,
-        email: this.modalSecond.email
-      });
-      this.modalSecond.name = '';
-      this.modalSecond.email = '';
-      this.modalSecond.show = false;
-    }
-  }
 }
 </script>
 
 <style lang="scss" scoped>
-
+    .navbar-link {
+        &.router-link-exact-active {
+            color: #5247e7;
+        }
+    }
 </style>
+
+
