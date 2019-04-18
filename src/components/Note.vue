@@ -23,6 +23,8 @@
         </div>
 </template>
 <script>
+import { mapState } from 'vuex'
+
 export default {
     name: 'note',
     props: {
@@ -37,46 +39,52 @@ export default {
             descr: ''
         }
     },
-    methods: {
-        onChangeTitle(event) {
-            this.title = event.target.value;
-        },
-        onChangeDescr(event) {
-            this.descr = event.target.value;
-        },
-        removeNote () {
-            this.$emit('remove', this.note.id);
-        },
-        editNote () {
-            this.$emit('edit', this.note.id)
-        }
-    },
     created () {
-        this.title = this.note.title;
-        this.descr = this.note.descr;
-        document.addEventListener('keyup', event => {
+        document.addEventListener('keydown', event => {
             if (this.note.edit) {
                 if (event.code === 'Enter') {
-                    this.$emit('update', {
-                        id: this.note.id,
-                        title: this.title,
-                        descr: this.descr
-                    });
+                    this.updateNote();
                 } else if (event.code === 'Escape') {
-                    this.$emit('escape', this.note.id);
+                    this.escapeEditNote();
                 }
             }
         });
         document.addEventListener('click', event => {
             if (this.note.edit && (this.$el != event.target && !this.$el.contains(event.target))) {
-                console.log(this.$el.contains(event.target));
-                this.$emit('update', {
-                    id: this.note.id,
-                    title: this.title,
-                    descr: this.descr
-                });
+                this.updateNote();
             }
         });
+    },
+    methods: {
+        onChangeTitle(e) {
+            this.title = e.target.value;
+        },
+        onChangeDescr(e) {
+            this.descr = e.target.value;
+        },
+        removeNote () {
+            this.$emit('remove', this.note.id);
+        },
+        editNote () {
+            this.$emit('edit', this.note);
+            this.title = this.note.title;
+            this.descr = this.note.descr;
+        },
+        updateNote () {
+            this.$emit('update', {
+                id: this.note.id,
+                title: this.title,
+                descr: this.descr
+            })
+            this.title = '';
+            this.title = '';
+        },
+        escapeEditNote () {
+            this.$emit('escapeEdit', this.note.id);
+        },
+        removeNote () {
+            this.$store.dispatch('notes/removeItem', this.note.id);
+        }
     }
 }
 </script>
@@ -97,10 +105,10 @@ export default {
         &.full {
             width: 100%;
         }
-        &.middle {
+        &.high {
             background-color: rgb(253, 253, 152);
         }
-        &.high {
+        &.very-high {
             background-color: tomato;
             .note-header {
                 h1, p {
@@ -156,7 +164,7 @@ export default {
             line-height: inherit;
             font-family: 'Montserrat', Helvetica, Arial, sans-serif;
             padding: 0;
-            .high & {
+            .very-high & {
                 .note-header {
                     h1, p {
                         color: #fff;

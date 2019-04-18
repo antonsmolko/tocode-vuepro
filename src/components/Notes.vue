@@ -2,18 +2,20 @@
     <div class="notes">
         <note
             :class="[{ full: !grid }, note.priority]"
-            v-for="(note, index) in notes"
-            :key="index"
+            v-for="note in notes"
+            :key="note.id"
             :note="note"
-            @remove="removeNote"
             @edit="editNote"
-            @update="update"
-            @escape="escape"
+            @escapeEdit="escapeEditNote"
+            @update="updateNote"
+            @remove="removeNote"
         />
     </div>
 </template>
 <script>
 import Note from './Note.vue'
+
+import { mapState } from 'vuex'
 
 export default {
     name: 'notes',
@@ -31,17 +33,34 @@ export default {
         }
     },
     methods: {
-        editNote (id) {
-            this.$emit('editNote', id);
+        removeNote (id) {
+            this.$store.dispatch('notes/removeItem', id);
+        },
+        editNote (note) {
+            this.$store.dispatch('notes/editItem', note);
+        },
+        // noTitleChange(value) {
+        //     this.$store.dispatch('notes/changeItemTitleField', value);
+        // },
+        // noDescrChange(value) {
+        //     this.$store.dispatch('notes/changeItemDescrField', value);
+        // },
+        updateNote (note) {
+            this.$store.dispatch('notes/updateItem', {
+                fields: {
+                    title: note.title,
+                    descr: note.descr,
+                    date: new Date(Date.now()).toLocaleString(),
+                    edit: false
+                },
+                id: note.id
+            });
+        },
+        escapeEditNote (id) {
+            this.$store.dispatch('notes/escapeEditItem', id);
         },
         removeNote (id) {
-            this.$emit('removeNote', id);
-        },
-        update (note) {
-            this.$emit('updateNote', note);
-        },
-        escape (id) {
-            this.$emit('escapeNote', id);
+            this.$store.dispatch('notes/removeItem', id);
         }
     }
 }

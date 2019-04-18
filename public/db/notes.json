@@ -1,0 +1,26 @@
+[
+    {
+        "id": 1,
+        "title": "First Note",
+        "descr": "Description for the first note",
+        "date": "10 april 2019",
+        "priority": "standart",
+        "edit": false
+      },
+      {
+        "id": 2,
+        "title": "Second Note",
+        "descr": "Description for the second note",
+        "date": "11 april 2019",
+        "priority": "high",
+        "edit": false
+      },
+      {
+        "id": 3,
+        "title": "Third Note",
+        "descr": "Description for the third note",
+        "date": "12 april 2019",
+        "priority": "very-high",
+        "edit": false
+      }
+]
