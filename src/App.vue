@@ -1,18 +1,29 @@
 <template>
-  <div class="wrapper">
-    <!-- sadfsfs -->
-    <div class="wrapper-content">
-      <section>
-        <div class="container">
+  <div>
+    <!-- header -->
+    <navbar :links="links" />
 
-        </div>
-      </section>
-    </div>
+    <router-view></router-view>
+
+
   </div>
 </template>
 
 <script>
+import { scrypt } from 'crypto';
 
 export default {
-  name: 'app',
+  name: 'App',
+  data () {
+    return {
+      links: []
+    }
+  },
+  created () {
+    this.links = [
+      { title: 'Home', url: '/'},
+      { title: 'Example', url: '/example'}
+    ]
+  }
 }
+</script>

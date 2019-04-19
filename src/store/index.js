@@ -10,7 +10,7 @@ const mutations = {}
 const actions = {}
 const getters = {}
 
-export default new Vuex({
+export default new Vuex.Store({
     state,
     mutations,
     actions,

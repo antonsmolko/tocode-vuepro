@@ -4,9 +4,10 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 
-import Home from '@/components/Home.vue'
-import Example from '@/components/Example.vue'
-import Note from '@/components/Note.vue'
+import Home from '@/pages/Home.vue'
+import Example from '@/pages/Example.vue'
+import Note from '@/pages/Note.vue'
+import NotFound from '@/pages/NotFound.vue'
 
 export default new VueRouter({
     mode: 'history',

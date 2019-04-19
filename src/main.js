@@ -8,6 +8,11 @@ import store from './store'
 
 Vue.config.productionTip = false
 
+// Components
+import Navbar from '@/components/Navbar.vue'
+
+Vue.component('navbar', Navbar);
+
 new Vue({
   router,
   store,
