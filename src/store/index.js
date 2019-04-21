@@ -3,7 +3,9 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import notes from './notes'
+import loading from './loading'
+import error from './error'
+import notify from './notify'
 
 const state = {}
 const mutations = {}
@@ -16,6 +18,8 @@ export default new Vuex.Store({
     actions,
     getters,
     modules: {
-        notes
+        loading,
+        error,
+        notify
     }
 })

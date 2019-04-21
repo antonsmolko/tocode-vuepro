@@ -22,7 +22,7 @@ export default {
   created () {
     this.links = [
       { title: 'Home', url: '/'},
-      { title: 'Example', url: '/example'}
+      { title: 'Notify', url: '/notify'}
     ]
   }
 }

@@ -5,8 +5,7 @@ Vue.use(VueRouter)
 
 
 import Home from '@/pages/Home.vue'
-import Example from '@/pages/Example.vue'
-import Note from '@/pages/Note.vue'
+import Notify from '@/pages/Notify.vue'
 import NotFound from '@/pages/NotFound.vue'
 
 export default new VueRouter({
@@ -18,15 +17,9 @@ export default new VueRouter({
             component: Home
         },
         {
-            path: '/example',
-            name: 'example',
-            component: Example
-        },
-        {
-            path: '/note/:id',
-            name: 'note',
-            component: Note,
-            props: true
+            path: '/notify',
+            name: 'notify',
+            component: Notify
         },
         {
             path: '*',
