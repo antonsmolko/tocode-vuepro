@@ -4,9 +4,8 @@ import VueRouter from 'vue-router'
 Vue.use(VueRouter)
 
 
-import Home from '@/pages/Home.vue'
+import Search from '@/pages/Search.vue'
 import Example from '@/pages/Example.vue'
-import Note from '@/pages/Note.vue'
 import NotFound from '@/pages/NotFound.vue'
 
 export default new VueRouter({
@@ -14,19 +13,13 @@ export default new VueRouter({
     routes: [
         {
             path: '/',
-            name: 'home',
-            component: Home
+            name: 'search',
+            component: Search
         },
         {
             path: '/example',
             name: 'example',
             component: Example
-        },
-        {
-            path: '/note/:id',
-            name: 'note',
-            component: Note,
-            props: true
         },
         {
             path: '*',

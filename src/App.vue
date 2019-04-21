@@ -21,7 +21,7 @@ export default {
   },
   created () {
     this.links = [
-      { title: 'Home', url: '/'},
+      { title: 'Search', url: '/'},
       { title: 'Example', url: '/example'}
     ]
   }
