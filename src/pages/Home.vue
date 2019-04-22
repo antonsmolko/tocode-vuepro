@@ -32,7 +32,7 @@
             </div>
           </div>
           <!-- repos-wrapper -->
-          <div class="repos__wrapper" v-if="repos">
+          <div class="repos__wrapper" v-if="repos.length">
             <!-- repos-header -->
             <div class="repos__header">
               <div
@@ -46,12 +46,25 @@
                 :class="[currentSort === 'stargazers_count' ? currentSortDir : '']"
               >Stars</div>
             </div>
+
+            <!-- preloader -->
+            <!-- <preloader v-if="loading" :width="90" :height="90" /> -->
+
             <!-- item -->
             <div class="repos-item" v-for="repo in reposSort" :key="repo.id">
               <div class="repos-info">
                 <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
                 <span>{{ repo.stargazers_count }} ⭐</span>
               </div>
+            </div>
+
+            <div class="repos__footer">
+              <!-- button-more -->
+              <button
+                v-if="!maxLength"
+                class="btn btnPrimary"
+                @click="showMore"
+              >LOAD MORE!</button>
             </div>
           </div>
         </div>
@@ -60,7 +73,8 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { mapState } from 'vuex'
+
 import Search from '@/components/Search.vue'
 
 export default {
@@ -71,14 +85,18 @@ export default {
     data () {
       return {
         search: '',
-        error: null,
-        repos: null,
-        user: null,
         currentSort: 'name',
-        currentSortDir: 'asc'
+        currentSortDir: 'asc',
+        loading: true
       }
     },
     computed: {
+      ...mapState({
+        user: state => state.repos.user,
+        repos: state => state.repos.items,
+        reposCount: state => state.repos.itemsCount,
+        error: state => state.error,
+      }),
       reposSort () {
         return this.repos.sort((a,b) => {
           let mod = 1;
@@ -89,33 +107,16 @@ export default {
             return 1 * mod;
           }
           return 0;
-        })
+        }).slice(0, this.reposCount);
       },
-      // classObject () {
-      //   return {
-      //     activeSort
-      //   }
-      // }
+      maxLength () {
+        return this.$store.getters['repos/maxLength'];
+      }
     },
     methods: {
       getRepos () {
-        axios
-          .get(`https://api.github.com/users/${this.search}/repos`)
-          .then(res => {
-            this.repos = res.data
-            this.error = null;
-          })
-          .catch(err => {
-            this.repos = null;
-            this.error = 'Can`t find this user!'
-          });
-
-        axios
-        .get(`https://api.github.com/users/${this.search}`)
-        .then(res => {
-          this.user = res.data;
-        })
-        .catch(() => this.user = null);
+        this.$store.dispatch('repos/getUser', this.search)
+          .then(() => this.$store.dispatch('repos/getItems', this.search));
       },
       sort (e) {
         if (e === this.currentSort) {
@@ -123,6 +124,9 @@ export default {
         } else {
           this.currentSort = e;
         }
+      },
+      showMore () {
+        this.$store.dispatch('repos/addItemsCount');
       }
     }
 }
@@ -220,6 +224,9 @@ export default {
         }
       }
     }
+    &__footer {
+      display: flex;
+      justify-content: center;
+    }
   }
-  
 </style>

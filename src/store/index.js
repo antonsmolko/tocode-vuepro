@@ -6,9 +6,16 @@ Vue.use(Vuex)
 import repos from './repos'
 
 const state = {
-    repos: []
+    error: ''
 }
-const mutations = {}
+const mutations = {
+    SET_ERROR (state, payload) {
+        state.error = payload;
+    },
+    CLEAR_ERROR (state) {
+        state.error = '';
+    }
+}
 const actions = {}
 const getters = {}
 
