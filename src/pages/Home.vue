@@ -8,7 +8,7 @@
           </div>
 
           <!-- search -->
-          <search 
+          <search
             :value="search"
             placeholder="Type username..."
             @search="search = $event"
@@ -24,14 +24,30 @@
               <div class="user__avatar">
                 <img :src="user.avatar_url" :alt="user.login">
               </div>
-              <span class="user__name">{{ user.login }}</span>
+              <div class="user__name-block">
+                <span class="user__name">{{ user.name }}</span>
+                <span class="user__login">{{ user.login }}</span>
+              </div>
               <span class="user__repos-count">{{ user.public_repos }}</span>
             </div>
           </div>
           <!-- repos-wrapper -->
           <div class="repos__wrapper" v-if="repos">
+            <!-- repos-header -->
+            <div class="repos__header">
+              <div
+                class="repos__header-title"
+                @click="sort('name')"
+                :class="[currentSort === 'name' ? currentSortDir : '']"
+              >Title</div>
+              <div
+                class="repos__header-stars"
+                @click="sort('stargazers_count')"
+                :class="[currentSort === 'stargazers_count' ? currentSortDir : '']"
+              >Stars</div>
+            </div>
             <!-- item -->
-            <div class="repos-item" v-for="repo in repos" :key="repo.id">
+            <div class="repos-item" v-for="repo in reposSort" :key="repo.id">
               <div class="repos-info">
                 <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
                 <span>{{ repo.stargazers_count }} ⭐</span>
@@ -57,8 +73,29 @@ export default {
         search: '',
         error: null,
         repos: null,
-        user: null
+        user: null,
+        currentSort: 'name',
+        currentSortDir: 'asc'
       }
+    },
+    computed: {
+      reposSort () {
+        return this.repos.sort((a,b) => {
+          let mod = 1;
+          if (this.currentSortDir === 'desc') mod = -1;
+          if (a[this.currentSort] < b[this.currentSort]) {
+            return -1 * mod;
+          } else if (a[this.currentSort] > b[this.currentSort]) {
+            return 1 * mod;
+          }
+          return 0;
+        })
+      },
+      // classObject () {
+      //   return {
+      //     activeSort
+      //   }
+      // }
     },
     methods: {
       getRepos () {
@@ -77,9 +114,15 @@ export default {
         .get(`https://api.github.com/users/${this.search}`)
         .then(res => {
           this.user = res.data;
-          console.log(res.data);
         })
         .catch(() => this.user = null);
+      },
+      sort (e) {
+        if (e === this.currentSort) {
+          this.currentSortDir = this.currentSortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          this.currentSort = e;
+        }
       }
     }
 }
@@ -134,10 +177,46 @@ export default {
           }
         }
         &__name {
+          display: block;
+          color: #aaa;
+          font-size: .85em;
+        }
+        &__login {
           font-weight: bold;
         }
         &__repos-count {
+          flex: none;
+          min-width: 40px;
           margin: 0 20px 0 auto;
+          padding: 0 10px;
+          line-height: 40px;
+          border-radius: 20px;
+          background-color: #ccc;
+          text-align: center;
+          color: #fff;
+          font-size: .85em;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+  .repos {
+    &__header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-bottom: 20px;
+      &-title, &-stars {
+        cursor: pointer;
+        &.desc {
+          &::after {
+            content: '\2191'
+          }
+        }
+        &.asc {
+          &::after {
+            content: '\2193'
+          }
         }
       }
     }
