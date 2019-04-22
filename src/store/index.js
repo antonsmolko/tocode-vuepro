@@ -3,9 +3,11 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-import notes from './notes'
+import repos from './repos'
 
-const state = {}
+const state = {
+    repos: []
+}
 const mutations = {}
 const actions = {}
 const getters = {}
@@ -16,6 +18,6 @@ export default new Vuex.Store({
     actions,
     getters,
     modules: {
-        notes
+        repos
     }
 })
