@@ -18,7 +18,16 @@
           <button v-if="!repos" class="btn btnPrimary" @click="getRepos">Search!</button>
           <button v-else class="btn btnPrimary" @click="getRepos">Search Again!</button>
 
-
+          <!-- user-info -->
+          <div class="info__wrapper" v-if="user">
+            <div class="info__content">
+              <div class="user__avatar">
+                <img :src="user.avatar_url" :alt="user.login">
+              </div>
+              <span class="user__name">{{ user.login }}</span>
+              <span class="user__repos-count">{{ user.public_repos }}</span>
+            </div>
+          </div>
           <!-- repos-wrapper -->
           <div class="repos__wrapper" v-if="repos">
             <!-- item -->
@@ -47,7 +56,8 @@ export default {
       return {
         search: '',
         error: null,
-        repos: null
+        repos: null,
+        user: null
       }
     },
     methods: {
@@ -62,6 +72,14 @@ export default {
             this.repos = null;
             this.error = 'Can`t find this user!'
           });
+
+        axios
+        .get(`https://api.github.com/users/${this.search}`)
+        .then(res => {
+          this.user = res.data;
+          console.log(res.data);
+        })
+        .catch(() => this.user = null);
       }
     }
 }
@@ -90,4 +108,39 @@ export default {
       border-bottom: 1px solid #dbdbdb;
     }
   }
+  .info {
+    &__wrapper {
+      width: 400px;
+      margin-top: 80px;
+    }
+    &__content {
+      display: flex;
+      align-items: center;
+      background-color: #fff;
+      padding: 10px;
+      border-radius: 50px;
+      .user {
+        &__avatar {
+          flex: none;
+          width: 80px;
+          border-radius: 50%;
+          overflow: hidden;
+          box-shadow: 0 3px 5px rgba(#000, .2);
+          margin-right: 20px;
+          img {
+            display: block;
+            width: 100%;
+            height: auto;
+          }
+        }
+        &__name {
+          font-weight: bold;
+        }
+        &__repos-count {
+          margin: 0 20px 0 auto;
+        }
+      }
+    }
+  }
+  
 </style>
