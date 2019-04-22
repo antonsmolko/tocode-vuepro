@@ -48,7 +48,7 @@
             </div>
 
             <!-- preloader -->
-            <!-- <preloader v-if="loading" :width="90" :height="90" /> -->
+            <preloader v-if="loading" :width="90" :height="90" />
 
             <!-- item -->
             <div class="repos-item" v-for="repo in reposSort" :key="repo.id">
