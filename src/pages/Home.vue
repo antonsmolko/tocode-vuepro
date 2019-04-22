@@ -52,22 +52,24 @@
               <preloader :width="60" :height="60" />
             </div>
 
-            <!-- item -->
-            <div v-else class="repos-item" v-for="repo in reposSort" :key="repo.id">
-              <div class="repos-info">
-                <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
-                <span>{{ repo.stargazers_count }} ⭐</span>
+            <template v-else>
+              <!-- item -->
+              <div class="repos-item" v-for="repo in reposSort" :key="repo.id">
+                <div class="repos-info">
+                  <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
+                  <span>{{ repo.stargazers_count }} ⭐</span>
+                </div>
               </div>
-            </div>
 
-            <div class="repos__footer">
-              <!-- button-more -->
-              <button
-                v-if="!maxLength"
-                class="btn btnPrimary"
-                @click="showMore"
-              >LOAD MORE!</button>
-            </div>
+              <div class="repos__footer">
+                <!-- button-more -->
+                <button
+                  v-if="!maxLength"
+                  class="btn btnPrimary"
+                  @click="showMore"
+                >LOAD MORE!</button>
+              </div>
+            </template>
           </div>
         </div>
       </section>
@@ -120,6 +122,7 @@ export default {
     },
     methods: {
       getRepos () {
+        this.loading = true;
         this.$store.dispatch('repos/getUser', this.search)
           .then(() => this.$store.dispatch('repos/getItems', this.search))
           .then(() => this.loading = false);

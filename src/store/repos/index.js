@@ -28,6 +28,7 @@ const mutations = {
 }
 const actions = {
     getItems ({commit}, payload) {
+        commit('CLEAR_ITEMS');
         return axios
           .get(`https://api.github.com/users/${payload}/repos`)
           .then(response => {
@@ -38,6 +39,7 @@ const actions = {
           .catch(() => commit('CLEAR_ITEMS'));
     },
     getUser ({commit}, payload) {
+        commit('CLEAR_USER');
         return axios
             .get(`https://api.github.com/users/${payload}`)
             .then(response => {
