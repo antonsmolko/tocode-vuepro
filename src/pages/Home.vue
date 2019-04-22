@@ -52,22 +52,37 @@
               <preloader :width="60" :height="60" />
             </div>
 
-            <!-- item -->
-            <div v-else class="repos-item" v-for="repo in reposSort" :key="repo.id">
-              <div class="repos-info">
-                <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
-                <span>{{ repo.stargazers_count }} ⭐</span>
+            <template v-else>
+              <!-- item -->
+              <div class="repos-item" v-for="repo in reposSort" :key="repo.id">
+                <div class="repos-info">
+                  <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
+                  <span>{{ repo.stargazers_count }} ⭐</span>
+                </div>
               </div>
-            </div>
 
-            <div class="repos__footer">
-              <!-- button-more -->
-              <button
-                v-if="!maxLength"
-                class="btn btnPrimary"
-                @click="showMore"
-              >LOAD MORE!</button>
-            </div>
+              <div class="repos__footer">
+                <!-- page-counter -->
+                <p class="repos__page-counter">
+                  {{ page.current }} / {{ pageCount }}
+                </p>
+                <!-- button-paginate -->
+                <div class="button-list">
+                  <button
+                    class="btn btnPrimary"
+                    @click="prevPage"
+                    :disabled="firstPage"
+                    :class="{btnDisabled: firstPage}"
+                  > &#8592; </button>
+                  <button
+                    class="btn btnPrimary"
+                    @click="nextPage"
+                    :disabled="lastPage"
+                    :class="{btnDisabled: lastPage}"
+                  > &#8594; </button>
+                </div>
+              </div>
+            </template>
           </div>
         </div>
       </section>
@@ -92,14 +107,17 @@ export default {
         search: '',
         currentSort: 'name',
         currentSortDir: 'asc',
-        loading: true
+        loading: true,
+        page: {
+          current: 1,
+          length: 3
+        }
       }
     },
     computed: {
       ...mapState({
         user: state => state.repos.user,
         repos: state => state.repos.items,
-        reposCount: state => state.repos.itemsCount,
         error: state => state.error,
       }),
       reposSort () {
@@ -112,17 +130,31 @@ export default {
             return 1 * mod;
           }
           return 0;
-        }).slice(0, this.reposCount);
+        }).filter((row, index) => {
+          let start = (this.page.current - 1) * this.page.length;
+          let end = this.page.current * this.page.length;
+          if (index >= start && index < end) return true;
+        });
       },
-      maxLength () {
-        return this.$store.getters['repos/maxLength'];
+      pageCount () {
+        return Math.ceil(this.repos.length / this.page.length);
+      },
+      firstPage () {
+        return this.page.current === 1;
+      },
+      lastPage () {
+        return (this.page.current * this.page.length) >= this.repos.length;
       }
     },
     methods: {
       getRepos () {
+        this.loading = true;
         this.$store.dispatch('repos/getUser', this.search)
           .then(() => this.$store.dispatch('repos/getItems', this.search))
-          .then(() => this.loading = false);
+          .then(() => {
+            this.page.current = 1;
+            this.loading = false
+          });
       },
       sort (e) {
         if (e === this.currentSort) {
@@ -133,6 +165,12 @@ export default {
       },
       showMore () {
         this.$store.dispatch('repos/addItemsCount');
+      },
+      prevPage () {
+        if (this.page.current > 1) this.page.current -= 1;
+      },
+      nextPage () {
+        if ((this.page.current * this.page.length) < this.repos.length) this.page.current += 1;
       }
     }
 }
@@ -232,12 +270,26 @@ export default {
     }
     &__footer {
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 40px;
     }
   }
   .preloader__wrapper {
     display: flex;
     justify-content: center;
     padding: 20px;
+  }
+  .button-list {
+    width: 100%;
+    text-align: center;
+    .btn {
+      margin: 0 20px;
+      &.btnDisabled {
+        background-color: #ccc;
+        border-color: #ccc;
+        cursor: not-allowed;
+      }
+    }
   }
 </style>
