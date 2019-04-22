@@ -48,10 +48,12 @@
             </div>
 
             <!-- preloader -->
-            <preloader v-if="loading" :width="90" :height="90" />
+            <div class="preloader__wrapper" v-if="loading">
+              <preloader :width="60" :height="60" />
+            </div>
 
             <!-- item -->
-            <div class="repos-item" v-for="repo in reposSort" :key="repo.id">
+            <div v-else class="repos-item" v-for="repo in reposSort" :key="repo.id">
               <div class="repos-info">
                 <a class="link" :href="repo.html_url" target="_blank">{{ repo.name }}</a>
                 <span>{{ repo.stargazers_count }} ⭐</span>
@@ -76,11 +78,14 @@
 import { mapState } from 'vuex'
 
 import Search from '@/components/Search.vue'
+// UI Components
+import Preloader from '@/components/UI/Preloader.vue'
 
 export default {
     name: 'Home',
     components: {
-      Search
+      Search,
+      Preloader
     },
     data () {
       return {
@@ -116,7 +121,8 @@ export default {
     methods: {
       getRepos () {
         this.$store.dispatch('repos/getUser', this.search)
-          .then(() => this.$store.dispatch('repos/getItems', this.search));
+          .then(() => this.$store.dispatch('repos/getItems', this.search))
+          .then(() => this.loading = false);
       },
       sort (e) {
         if (e === this.currentSort) {
@@ -228,5 +234,10 @@ export default {
       display: flex;
       justify-content: center;
     }
+  }
+  .preloader__wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
   }
 </style>
